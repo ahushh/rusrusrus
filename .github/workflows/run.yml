@@ -1,0 +1,21 @@
+name: Run bot CI
+
+on:
+  workflow_dispatch:
+    branches:
+      - main
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - name: run pm2
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          whoami
+          ls -al

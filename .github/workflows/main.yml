@@ -1,6 +1,9 @@
-name: Node CI
+name: Build and Deploy CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -15,9 +18,18 @@ jobs:
       with:
         version: 6.0.2
     - name: Install npm dependencies
-      run: pnpm install
+      run: pnpm install && mkdir dist
+    - name: Make envfile
+      uses: SpicyPizza/create-envfile@v2.0
+      with:
+        envkey_SSH_BOT_TOKEN: envkey_SSH_${{ secrets.BOT_TOKEN }}
+        envkey_SSH_CHATGPAT_TOKEN: ${{ secrets.CHATGPAT_TOKEN }}
+        envkey_SSH_WEBHOOK_DOMAIN: 185.10.68.207
+        envkey_SSH_PORT: 8841
+        envkey_SSH_PROD: true
+        directory: dist
     - name: Run build task
-      run: npm run build --if-present
+      run: pnpm run build
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@main
       env:
