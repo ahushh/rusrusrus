@@ -1,6 +1,8 @@
 const dotenv = require('dotenv')
 dotenv.config();
 import { Telegraf, Context } from 'telegraf';
+import { Message } from 'telegraf/typings/core/types/typegram';
+import { getChatGPTResponse } from './chatgpt';
 
 interface MyContext extends Context {
   myProp?: string
@@ -18,6 +20,28 @@ bot.hears(/ящер/ui, (ctx) => {
   ctx.reply('БЛОКИРУЮ! РУС РУС РУС!');
 })
 
+bot.on('message', (ctx) => {
+  const message = ctx.message as Message.TextMessage;
+  const messageText = message.text;
+
+  const regexes = [
+    /дай знак!?/iu,
+  ];
+  console.log('messageText', messageText);
+  console.log('reply_to_message', message.reply_to_message, (message.reply_to_message as any)?.text);
+  if (regexes.some(r => messageText.match(r)) && message.reply_to_message) {
+    const reply = message.reply_to_message as Message.TextMessage;
+    const originalMessage = reply.text || (reply as Message.CaptionableMessage).caption;
+
+    getChatGPTResponse(originalMessage as string, process.env.CHATGPAT_TOKEN as string).then(response => {
+      ctx.reply(response);
+    }).catch(e => {
+      console.error('Chat GPT error', originalMessage, e);
+      ctx.reply(`Ноль, целковый... ${e.error.message}`);
+    })
+  }
+});
+
 
 const conf = process.env.prod === 'true' ? {
   webhook: {
@@ -26,9 +50,9 @@ const conf = process.env.prod === 'true' ? {
   },
 } : {};
 
+console.log('Launch RUSRUSRUS bot...')
 bot.launch(conf);
 
 
-// Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
