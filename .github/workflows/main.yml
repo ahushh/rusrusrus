@@ -22,7 +22,7 @@ jobs:
     - name: Make envfile
       uses: SpicyPizza/create-envfile@v2.0
       with:
-        envkey_BOT_TOKEN: envkey_SSH_${{ secrets.BOT_TOKEN }}
+        envkey_BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         envkey_CHATGPAT_TOKEN: ${{ secrets.CHATGPAT_TOKEN }}
         envkey_WEBHOOK_DOMAIN: 185.10.68.207
         envkey_PORT: 8841
