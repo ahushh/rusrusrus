@@ -18,4 +18,4 @@ jobs:
         port: 22
         script: |
           whoami
-          ls -al
+          cd /home/lain/rusrusrus && pm2 start dist/index.js

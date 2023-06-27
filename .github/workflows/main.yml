@@ -27,7 +27,6 @@ jobs:
         envkey_SSH_WEBHOOK_DOMAIN: 185.10.68.207
         envkey_SSH_PORT: 8841
         envkey_SSH_PROD: true
-        directory: dist
     - name: Run build task
       run: pnpm run build
     - name: Deploy to Server
@@ -35,8 +34,7 @@ jobs:
       env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rlgoDzvc -i --delete"
-          SOURCE: "dist/"
+          SOURCE: "."
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
-          EXCLUDE: "/dist/, /node_modules/"
