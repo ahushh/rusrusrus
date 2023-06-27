@@ -9,8 +9,14 @@ interface MyContext extends Context {
 
 const bot = new Telegraf <MyContext>(process.env.BOT_TOKEN as string);
 
-bot.hears(/рус/ui, (ctx) => ctx.reply('РУС РУС РУС!'))
-bot.hears(/ящер/ui, (ctx) => ctx.reply('БЛОКИРУЮ! РУС РУС РУС!'))
+bot.hears(/рус/ui, (ctx) => {
+  console.log('hears', ctx.match);
+  ctx.reply('РУС РУС РУС!');
+})
+bot.hears(/ящер/ui, (ctx) => {
+  console.log('hears', ctx.match);
+  ctx.reply('БЛОКИРУЮ! РУС РУС РУС!');
+})
 
 
 const conf = process.env.prod === 'true' ? {
