@@ -1,9 +1,10 @@
-const dotenv = require('dotenv')
-dotenv.config();
+import dotenv from 'dotenv';
 import { Telegraf, Context } from 'telegraf';
 import { Message } from 'telegraf/typings/core/types/typegram';
+
 import { getMessageScore, getTale } from './chatgpt';
 
+dotenv.config();
 const TOKEN = process.env.CHATGPAT_TOKEN as string;
 
 interface MyContext extends Context {
@@ -12,76 +13,76 @@ interface MyContext extends Context {
   match?: string;
 }
 
-const bot = new Telegraf <MyContext>(process.env.BOT_TOKEN as string);
+const bot = new Telegraf<MyContext>(process.env.BOT_TOKEN as string);
 
 bot.command('help', (ctx: MyContext) => {
-  ctx.reply(`
+    ctx.reply(`
   Я Виктор Корнеплод! Ответь на любое сообщение в чате с текстом "Корнеплод, кто он?" или "Корнеплод, кто автор?" - 
   Корнеплод расскажет всю правду, написал ли это честный человек РУС или под личиной человеческой ящер подлый прячется.
   Еще я могу рассказать былину, просто обратись ко мне по фамилии моей.
   `);
-})
+});
 
-bot.hears(/(^|\s)рус/ui, (ctx: MyContext) => { 
-  console.log('hears', ctx.match);
-  ctx.reply('РУС РУС РУС!');
-})
+bot.hears(/(^|\s)рус/ui, (ctx: MyContext) => {
+    console.log('hears', ctx.match);
+    ctx.reply('РУС РУС РУС!');
+});
 bot.hears(/ящер|ящир|((\s|^)жид($|\s))|евре/ui, (ctx) => {
-  console.log('hears', ctx.match);
-  ctx.reply('БЛОКИРУЮ! РУС РУС РУС!');
-})
+    console.log('hears', ctx.match);
+    ctx.reply('БЛОКИРУЮ! РУС РУС РУС!');
+});
 
 bot.hears(/корнеплод/ui, (ctx: MyContext) => {
-  console.log('hears', ctx.match);
-  ctx.reply('А?? Корнеплод Виктор звать меня... вот что я скажу тебе:');
-  getTale(TOKEN).then(res => {
-    ctx.reply(res);
-  }).catch(e => {
-    console.error('Chat GPT error', e);
-    ctx.reply(`Ноль, целковый... ${e.error.message}`);
-  })
-})
+    console.log('hears', ctx.match);
+    ctx.reply('А?? Корнеплод Виктор звать меня... вот что я скажу тебе:');
+    getTale(TOKEN).then(res => {
+        ctx.reply(res);
+    }).catch(e => {
+        console.error('Chat GPT error', e);
+        ctx.reply(`Ноль, целковый... ${e.error.message}`);
+    });
+});
 
 bot.on('message', (ctx: MyContext) => {
-  const message = ctx.message as Message.TextMessage;
-  const messageText = message.text;
+    const message = ctx.message as Message.TextMessage;
+    const messageText = message.text;
 
-  const regexes = [
-    /корнеплод,? дай знак!?/iu,
-    /корнеплод,? кто/iu,
-    /(корнеплод,? )?дай знак!?/iu,
-    /(корнеплод,? )?кто он\??/iu,
-    /(корнеплод,? )?кто автор\??/iu,
-    /(корнеплод,? )?кто он по масти\??/iu
+    const regexes = [
+        /корнеплод,? дай знак!?/iu,
+        /корнеплод,? кто/iu,
+        /(корнеплод,? )?дай знак!?/iu,
+        /(корнеплод,? )?кто он\??/iu,
+        /(корнеплод,? )?кто автор\??/iu,
+        /(корнеплод,? )?кто он по масти\??/iu
 
-  ];
+    ];
 
-  if (regexes.some(r => messageText.match(r)) && message.reply_to_message) {
-    const reply = message.reply_to_message as Message.TextMessage;
-    const originalMessage = reply.text || (reply as Message.CaptionableMessage).caption;
+    if (regexes.some(r => messageText.match(r)) && message.reply_to_message) {
+        const reply = message.reply_to_message as Message.TextMessage;
+        const originalMessage = reply.text || (reply as Message.CaptionableMessage).caption;
 
-    getMessageScore(originalMessage as string, TOKEN).then(response => {
-      if (Math.random() > 0.5) {
-        ctx.reply(response.replace('ЯЩЕР', 'ЯЩИР').replace('РУС', 'РУС!!'));
-      } else {
-        ctx.reply(response);
-      }
-    }).catch(e => {
-      console.error('Chat GPT error', originalMessage, e);
-      ctx.reply(`Ноль, целковый... ${e.error.message}`);
-    })
-  }
+        getMessageScore(originalMessage as string, TOKEN).then(response => {
+            if (Math.random() > 0.5) {
+                ctx.reply(response.replace('ЯЩЕР', 'ЯЩИР').replace('РУС', 'РУС!!'));
+            } else {
+                ctx.reply(response);
+            }
+        }).catch(e => {
+            console.error('Chat GPT error', originalMessage, e);
+            ctx.reply(`Ноль, целковый... ${e.error.message}`);
+        });
+    }
 });
 
 
 const conf = process.env.prod === 'true' ? {
-  webhook: {
-    domain: process.env.WEBHOOK_DOMAIN as string,
-    port: Number(process.env.PORT) as number,
-  },
+    webhook: {
+        domain: process.env.WEBHOOK_DOMAIN as string,
+        port: Number(process.env.PORT) as number,
+    },
 } : {};
 
-console.log('Launch RUSRUSRUS bot...')
+console.log('Launch RUSRUSRUS bot...');
 bot.launch(conf);
 
 
