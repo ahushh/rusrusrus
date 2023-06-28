@@ -43,9 +43,30 @@ bot.hears(/корнеплод/ui, (ctx: MyContext) => {
     });
 });
 
+function doReply(ctx: MyContext, response: string) {
+    if (Math.random() > 0.5) {
+        ctx.reply(response.replace('ЯЩЕР', 'ЯЩИР').replace('РУС', 'РУС!!'));
+    } else {
+        ctx.reply(response);
+    }
+}
+
 bot.on('message', (ctx: MyContext) => {
     const message = ctx.message as Message.TextMessage;
     const messageText = message.text;
+    const reply = message.reply_to_message as Message.TextMessage;
+    const botId = ctx.botInfo.id;
+
+    if (reply?.from?.id === botId) {
+        console.log('Reply to bots message', messageText);
+        getMessageScore(messageText as string, TOKEN).then(response => {
+            doReply(ctx, response);
+        }).catch(e => {
+            console.error('Chat GPT error', messageText, e);
+            ctx.reply(`Ноль, целковый... ${e.error.message}`);
+        });
+        return;
+    }
 
     const regexes = [
         /корнеплод,? дай знак!?/iu,
@@ -58,15 +79,10 @@ bot.on('message', (ctx: MyContext) => {
     ];
 
     if (regexes.some(r => messageText.match(r)) && message.reply_to_message) {
-        const reply = message.reply_to_message as Message.TextMessage;
         const originalMessage = reply.text || (reply as Message.CaptionableMessage).caption;
 
         getMessageScore(originalMessage as string, TOKEN).then(response => {
-            if (Math.random() > 0.5) {
-                ctx.reply(response.replace('ЯЩЕР', 'ЯЩИР').replace('РУС', 'РУС!!'));
-            } else {
-                ctx.reply(response);
-            }
+            doReply(ctx, response);
         }).catch(e => {
             console.error('Chat GPT error', originalMessage, e);
             ctx.reply(`Ноль, целковый... ${e.error.message}`);
