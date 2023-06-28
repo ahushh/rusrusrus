@@ -2,7 +2,9 @@ const dotenv = require('dotenv')
 dotenv.config();
 import { Telegraf, Context } from 'telegraf';
 import { Message } from 'telegraf/typings/core/types/typegram';
-import { getChatGPTResponse } from './chatgpt';
+import { getMessageScore, getTale } from './chatgpt';
+
+const TOKEN = process.env.CHATGPAT_TOKEN as string;
 
 interface MyContext extends Context {
   myProp?: string
@@ -33,11 +35,27 @@ bot.on('message', (ctx) => {
     const reply = message.reply_to_message as Message.TextMessage;
     const originalMessage = reply.text || (reply as Message.CaptionableMessage).caption;
 
-    getChatGPTResponse(originalMessage as string, process.env.CHATGPAT_TOKEN as string).then(response => {
+    getMessageScore(originalMessage as string, TOKEN).then(response => {
       ctx.reply(response);
     }).catch(e => {
       console.error('Chat GPT error', originalMessage, e);
       ctx.reply(`Ноль, целковый... ${e.error.message}`);
+    })
+  }
+});
+
+bot.on('message', (ctx) => {
+  const message = ctx.message as Message.TextMessage;
+  const botId = bot?.botInfo?.id;
+  const botUsername = bot?.botInfo?.username.toLowerCase();
+
+  const isReply = message?.reply_to_message?.from?.id === botId;
+  const startsWithNickname = message.text.toLowerCase().startsWith(`@${botUsername}`);
+
+  if (isReply || startsWithNickname) {
+    ctx.reply('А?? Корнеплод Виктор звать меня... сказку тебе приготовил');
+    getTale(TOKEN).then(res => {
+      ctx.reply(res);
     })
   }
 });

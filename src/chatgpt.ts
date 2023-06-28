@@ -23,7 +23,7 @@ const initial = `
 Ответ должен состоять только из одного слова: РУС или ящер, без объяснений. В ответе ТОЛЬКО ОДНО СЛОВО, без объяснений и предположений.
 `;
 
-export async function getChatGPTResponse(message: string, token: string) {
+export async function getMessageScore(message: string, token: string) {
   console.log('getChatGPTResponse message', message);
   try {
     const content = `Вот сообщение для оценки: ${message}`;
@@ -31,6 +31,38 @@ export async function getChatGPTResponse(message: string, token: string) {
       messages: [
         { role: 'system', content: initial },
         { role: 'user', content }
+      ],
+      model: 'gpt-3.5-turbo'
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      }
+    });
+
+    // Extract the model-generated reply from the API response
+    const reply = response.data.choices[0].message.content;
+    return reply;
+  } catch (error) {
+    const response = (error as AxiosError).response;
+    throw response!.data;
+  }
+}
+
+
+export async function getTale(token: string) {
+  const content = `
+  сгенерируй случайную историю про славного парня свято-ария РУСИЧА белокурого Виктора Корнеплода с использованием одной, только одной, из приведенных ниже тем:
+  о том как он с ящерами сражался; о его подвигах ратных; о кровавой схватке на Нибиру; о том как освободили Гиперборею; о рейде на Атлантиду;
+  про щиты из фольги и шапочки; лазерные бластеры; про великую магию Перуна; дары Сварога; песни Даждьбога; встрече с русалками; великом пире вегетарианском;
+  про тайное судьбу; о том как на площадке РУСИЧА был встречен; о том как пытались убить Виктора Корнеплода; про гордость Виктора Корнеплода; о великой магии Виктора Корнеплода;
+  как тайный советник пиво на лицо пролил себя в глаза; о том как он себя встретил; о том как он сестру потерял.
+  Ответ должен быть ограничен максимум двумя абзацами.
+  ` 
+  try {
+    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+      messages: [
+        { role: 'user', content}
       ],
       model: 'gpt-3.5-turbo'
     }, {
