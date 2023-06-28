@@ -17,34 +17,10 @@ bot.hears(/(^|\s)рус/ui, (ctx) => {
   console.log('hears', ctx.match);
   ctx.reply('РУС РУС РУС!');
 })
-bot.hears(/ящер|ящир|жид|евре/ui, (ctx) => {
+bot.hears(/ящер|ящир|((\s|^)жид($|\s))|евре/ui, (ctx) => {
   console.log('hears', ctx.match);
   ctx.reply('БЛОКИРУЮ! РУС РУС РУС!');
 })
-
-bot.on('message', (ctx) => {
-  const message = ctx.message as Message.TextMessage;
-  const messageText = message.text;
-
-  const regexes = [
-    /(корнеплод,? )?дай знак!?/iu,
-    /(корнеплод,? )?кто он,? виктор\??/iu,
-    /(корнеплод,? )?кто он по масти\??/iu
-  ];
-  console.log('messageText', messageText);
-  console.log('reply_to_message', message.reply_to_message, (message.reply_to_message as any)?.text);
-  if (regexes.some(r => messageText.match(r)) && message.reply_to_message) {
-    const reply = message.reply_to_message as Message.TextMessage;
-    const originalMessage = reply.text || (reply as Message.CaptionableMessage).caption;
-
-    getMessageScore(originalMessage as string, TOKEN).then(response => {
-      ctx.reply(response);
-    }).catch(e => {
-      console.error('Chat GPT error', originalMessage, e);
-      ctx.reply(`Ноль, целковый... ${e.error.message}`);
-    })
-  }
-});
 
 bot.hears(/корнеплод/ui, (ctx) => {
   console.log('hears', ctx.match);
@@ -56,6 +32,38 @@ bot.hears(/корнеплод/ui, (ctx) => {
     ctx.reply(`Ноль, целковый... ${e.error.message}`);
   })
 })
+
+bot.on('message', (ctx) => {
+  const message = ctx.message as Message.TextMessage;
+  const messageText = message.text;
+
+  const regexes = [
+    /корнеплод,? дай знак!?/iu,
+    /корнеплод,? кто/iu,
+    /(корнеплод,? )?дай знак!?/iu,
+    /(корнеплод,? )?кто он\??/iu,
+    /(корнеплод,? )?кто автор\??/iu,
+    /(корнеплод,? )?кто он по масти\??/iu
+
+  ];
+
+  if (regexes.some(r => messageText.match(r)) && message.reply_to_message) {
+    const reply = message.reply_to_message as Message.TextMessage;
+    const originalMessage = reply.text || (reply as Message.CaptionableMessage).caption;
+
+    getMessageScore(originalMessage as string, TOKEN).then(response => {
+      if (Math.random() > 0.5) {
+        ctx.reply(response.replace('ЯЩЕР', 'ЯЩИР').replace('РУС', 'РУС!!'));
+      } else {
+        ctx.reply(response);
+      }
+    }).catch(e => {
+      console.error('Chat GPT error', originalMessage, e);
+      ctx.reply(`Ноль, целковый... ${e.error.message}`);
+    })
+  }
+});
+
 
 const conf = process.env.prod === 'true' ? {
   webhook: {
