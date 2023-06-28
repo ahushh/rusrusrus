@@ -44,22 +44,13 @@ bot.on('message', (ctx) => {
   }
 });
 
-bot.on('message', (ctx) => {
-  const message = ctx.message as Message.TextMessage;
-  const botId = bot?.botInfo?.id;
-  const botUsername = bot?.botInfo?.username.toLowerCase();
-
-  const isReply = message?.reply_to_message?.from?.id === botId;
-  const startsWithNickname = message.text.toLowerCase().startsWith(`@${botUsername}`);
-
-  if (isReply || startsWithNickname) {
-    ctx.reply('А?? Корнеплод Виктор звать меня... сказку тебе приготовил');
-    getTale(TOKEN).then(res => {
-      ctx.reply(res);
-    })
-  }
-});
-
+bot.hears(/корнеплод/ui, (ctx) => {
+  console.log('hears', ctx.match);
+  ctx.reply('А?? Корнеплод Виктор звать меня... вот что я скажу тебе');
+  getTale(TOKEN).then(res => {
+    ctx.reply(res);
+  })
+})
 
 const conf = process.env.prod === 'true' ? {
   webhook: {
