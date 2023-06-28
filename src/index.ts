@@ -49,6 +49,9 @@ bot.hears(/корнеплод/ui, (ctx) => {
   ctx.reply('А?? Корнеплод Виктор звать меня... вот что я скажу тебе');
   getTale(TOKEN).then(res => {
     ctx.reply(res);
+  }).catch(e => {
+    console.error('Chat GPT error', e);
+    ctx.reply(`Ноль, целковый... ${e.error.message}`);
   })
 })
 
