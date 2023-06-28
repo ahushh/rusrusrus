@@ -17,9 +17,19 @@ bot.hears(/рус/ui, (ctx) => {
   console.log('hears', ctx.match);
   ctx.reply('РУС РУС РУС!');
 })
-bot.hears(/ящер/ui, (ctx) => {
+bot.hears(/ящер|жид|евре/ui, (ctx) => {
   console.log('hears', ctx.match);
   ctx.reply('БЛОКИРУЮ! РУС РУС РУС!');
+})
+bot.hears(/корнеплод/ui, (ctx) => {
+  console.log('hears', ctx.match);
+  ctx.reply('А?? Корнеплод Виктор звать меня... вот что я скажу тебе');
+  getTale(TOKEN).then(res => {
+    ctx.reply(res);
+  }).catch(e => {
+    console.error('Chat GPT error', e);
+    ctx.reply(`Ноль, целковый... ${e.error.message}`);
+  })
 })
 
 bot.on('message', (ctx) => {
@@ -44,16 +54,6 @@ bot.on('message', (ctx) => {
   }
 });
 
-bot.hears(/корнеплод/ui, (ctx) => {
-  console.log('hears', ctx.match);
-  ctx.reply('А?? Корнеплод Виктор звать меня... вот что я скажу тебе');
-  getTale(TOKEN).then(res => {
-    ctx.reply(res);
-  }).catch(e => {
-    console.error('Chat GPT error', e);
-    ctx.reply(`Ноль, целковый... ${e.error.message}`);
-  })
-})
 
 const conf = process.env.prod === 'true' ? {
   webhook: {
