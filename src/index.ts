@@ -9,11 +9,20 @@ const TOKEN = process.env.CHATGPAT_TOKEN as string;
 interface MyContext extends Context {
   myProp?: string
   myOtherProp?: number
+  match?: string;
 }
 
 const bot = new Telegraf <MyContext>(process.env.BOT_TOKEN as string);
 
-bot.hears(/(^|\s)рус/ui, (ctx) => {
+bot.command('help', (ctx: MyContext) => {
+  ctx.reply(`
+  Я Виктор Корнеплод! Ответь на любое сообщение в чате с текстом "Корнеплод, кто он?" или "Корнеплод, кто автор?" - 
+  Корнеплод расскажет всю правду, написал ли это честный человек РУС или под личиной человеческой ящер подлый прячется.
+  Еще я могу рассказать былину, просто обратись ко мне по фамилии моей.
+  `);
+})
+
+bot.hears(/(^|\s)рус/ui, (ctx: MyContext) => { 
   console.log('hears', ctx.match);
   ctx.reply('РУС РУС РУС!');
 })
@@ -22,7 +31,7 @@ bot.hears(/ящер|ящир|((\s|^)жид($|\s))|евре/ui, (ctx) => {
   ctx.reply('БЛОКИРУЮ! РУС РУС РУС!');
 })
 
-bot.hears(/корнеплод/ui, (ctx) => {
+bot.hears(/корнеплод/ui, (ctx: MyContext) => {
   console.log('hears', ctx.match);
   ctx.reply('А?? Корнеплод Виктор звать меня... вот что я скажу тебе:');
   getTale(TOKEN).then(res => {
@@ -33,7 +42,7 @@ bot.hears(/корнеплод/ui, (ctx) => {
   })
 })
 
-bot.on('message', (ctx) => {
+bot.on('message', (ctx: MyContext) => {
   const message = ctx.message as Message.TextMessage;
   const messageText = message.text;
 
