@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
 import { Telegraf, Context } from 'telegraf';
+import { schedule } from 'node-schedule';
+
 import { Message } from 'telegraf/typings/core/types/typegram';
 
 import { getMessageScore, getTale } from './chatgpt';
@@ -23,11 +25,21 @@ bot.command('help', (ctx: MyContext) => {
   `);
 });
 
-bot.hears('poll', (ctx: MyContext) => {
-    const chatId = ctx.chat?.id;
+const createPoll = (chatId: number) => {
     const question = 'Какого тебе сегодня?';
     const options = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-    bot.telegram.sendPoll(chatId as number, question, options, { is_anonymous: false });
+    bot.telegram.sendPoll(chatId, question, options, { is_anonymous: false });
+};
+
+bot.hears('poll', (ctx: MyContext) => {
+    const chatId = ctx.chat?.id;
+    createPoll(chatId as number);
+});
+
+const job = schedule.scheduleJob('0 6 * * *', () => {
+    console.log('Running the background job...');
+    const chatId = -1001754687915;
+    createPoll(chatId);
 });
 
 bot.hears(/(^|\s)рус/ui, (ctx: MyContext) => {
