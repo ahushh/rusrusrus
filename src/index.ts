@@ -26,7 +26,7 @@ bot.command('help', (ctx: MyContext) => {
 bot.hears('poll', (ctx: MyContext) => {
     const chatId = ctx.chat?.id;
     const question = 'Какого тебе сегодня?';
-    const options = ['1', '2', '3', '4', '5'];
+    const options = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
     bot.telegram.sendPoll(chatId as number, question, options);
 });
 
