@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { Telegraf, Context } from 'telegraf';
-import { schedule } from 'node-schedule';
+import schedule from 'node-schedule';
 
 import { Message } from 'telegraf/typings/core/types/typegram';
 
