@@ -23,6 +23,13 @@ bot.command('help', (ctx: MyContext) => {
   `);
 });
 
+bot.hears('poll', (ctx: MyContext) => {
+    const chatId = ctx.chat?.id;
+    const question = 'Какого тебе сегодня?';
+    const options = ['1', '2', '3', '4', '5'];
+    bot.telegram.sendPoll(chatId as number, question, options);
+});
+
 bot.hears(/(^|\s)рус/ui, (ctx: MyContext) => {
     console.log('hears', ctx.match);
     ctx.reply('РУС РУС РУС!');
