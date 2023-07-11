@@ -26,7 +26,7 @@ bot.command('help', (ctx: MyContext) => {
 });
 
 const createPoll = (chatId: number) => {
-    const question = 'Какого тебе сегодня?';
+    const question = 'Как оно?';
     const options = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
     bot.telegram.sendPoll(chatId, question, options, { is_anonymous: false });
 };
@@ -36,7 +36,7 @@ bot.hears('poll', (ctx: MyContext) => {
     createPoll(chatId as number);
 });
 
-const job = schedule.scheduleJob('0 6 * * *', () => {
+const job = schedule.scheduleJob('0 14 * * *', () => {
     console.log('Running the background job...');
     const chatId = -1001754687915;
     createPoll(chatId);
