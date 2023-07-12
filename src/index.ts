@@ -43,16 +43,16 @@ const job = schedule.scheduleJob('0 14 * * *', () => {
 });
 
 bot.hears(/(^|\s)рус/ui, (ctx: MyContext) => {
-    console.log('hears', ctx.match);
+    console.log('hears', ctx?.match);
     ctx.reply('РУС РУС РУС!');
 });
 bot.hears(/ящер|ящир|((\s|^)жид($|\s))|евре/ui, (ctx) => {
-    console.log('hears', ctx.match);
+    console.log('hears', ctx?.match);
     ctx.reply('БЛОКИРУЮ! РУС РУС РУС!');
 });
 
 bot.hears(/корнеплод/ui, (ctx: MyContext) => {
-    console.log('hears', ctx.match);
+    console.log('hears', ctx?.match);
     ctx.reply('А?? Корнеплод Виктор звать меня... вот что я скажу тебе:');
     getTale(TOKEN).then(res => {
         ctx.reply(res);
@@ -97,7 +97,7 @@ bot.on('message', (ctx: MyContext) => {
 
     ];
 
-    if (regexes.some(r => messageText.match(r)) && message.reply_to_message) {
+    if (regexes.some(r => messageText?.match(r)) && message?.reply_to_message) {
         const originalMessage = reply.text || (reply as Message.CaptionableMessage).caption;
 
         getMessageScore(originalMessage as string, TOKEN).then(response => {
