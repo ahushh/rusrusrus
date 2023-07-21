@@ -75,6 +75,8 @@ bot.on('message', (ctx: MyContext) => {
     const messageText = message.text;
     const reply = message.reply_to_message as Message.TextMessage;
     const botId = ctx.botInfo.id;
+    console.log('message', messageText);
+    console.log('userId', ctx?.message?.from?.id);
 
     if (reply?.from?.id === botId) {
         console.log('Reply to bots message', messageText);
