@@ -77,6 +77,11 @@ bot.on('message', (ctx: MyContext) => {
     const botId = ctx.botInfo.id;
     console.log('message', messageText);
     console.log('userId', ctx?.message?.from?.id);
+    const hui = 336290861;
+    if (ctx?.message?.from?.id == hui) {
+        ctx.reply(`Ты хуй`);
+        return;
+    }
 
     if (reply?.from?.id === botId) {
         console.log('Reply to bots message', messageText);
