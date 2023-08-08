@@ -19,7 +19,7 @@ const bot = new Telegraf<MyContext>(process.env.BOT_TOKEN as string);
 
 bot.command('help', (ctx: MyContext) => {
     ctx.reply(`
-  Я Виктор Корнеплод! Ответь на любое сообщение в чате с текстом "Корнеплод, кто он?" или "Корнеплод, кто автор?" - 
+  Я Виктор Корнеплод! Ответь на любое сообщение в чате с текстом "Корнеплод, кто он?" или "Корнеплод, кто автор?" -
   Корнеплод расскажет всю правду, написал ли это честный человек РУС или под личиной человеческой ящер подлый прячется.
   Еще я могу рассказать былину, просто обратись ко мне по фамилии моей.
   `);
@@ -40,6 +40,12 @@ const job = schedule.scheduleJob('0 14 * * *', () => {
     console.log('Running the background job...');
     const chatId = -1001754687915;
     createPoll(chatId);
+});
+
+const job2 = schedule.scheduleJob('30 14 * * *', () => {
+    console.log('Running the background job...');
+    const chatId = -1001754687915;
+    bot.telegram.sendMessage(chatId, '@n0itanigami пишу тебе я, дорогая Корина, думал ли ты сегодня о курении? курил ли ты сегодня?');
 });
 
 bot.hears(/(^|\s)рус/ui, (ctx: MyContext) => {
