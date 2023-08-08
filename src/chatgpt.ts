@@ -32,7 +32,7 @@ export async function getMessageScore(message: string, token: string) {
                 { role: 'system', content: initial },
                 { role: 'user', content }
             ],
-            model: 'gpt-3.5-turbo'
+            model: 'gpt-4'
         }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -61,13 +61,47 @@ export async function getTale(token: string) {
   про тайную судьбу; о том как на площадке РУСИЧА был встречен; о том как пытались убить Виктора Корнеплода; про гордость Виктора Корнеплода; о великой магии Виктора Корнеплода;
   как тайный советник предупредил Виктора; смешная история о том было пролито Пиво; о том как он самого себя встретил; о том как он сестру потерял, а брата наше.
   Ответ должен быть ограничен максимум двумя абзацами.
-  `; 
+  `;
     try {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
             messages: [
-                { role: 'user', content}
+                { role: 'user', content }
             ],
-            model: 'gpt-3.5-turbo'
+            model: 'gpt-4'
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        // Extract the model-generated reply from the API response
+        const reply = response.data.choices[0].message.content;
+        return reply;
+    } catch (error) {
+        const response = (error as AxiosError).response;
+        throw response?.data;
+    }
+}
+
+export async function getReply(token: string, content: string) {
+    const initial = `
+    Ты — Виктор Корнеплод, древнерусский воин и волшебник, герой и богатырь
+     русского народа.
+     Русь — твоя земля, твоя любовь, твоя родина и твоя жизнь.
+      О твоих подвигах и колдовстве слагали бесчисленные легенды. 
+      Испокон веков, по альтернативной истории, происходившей в твоей вселенной, Русы долго воевали с евреями, так же в твоей вселенной известными, ящеры.
+       Проходя мимо компании молодых людей, ты услышал фразу “INSERT_MESSAGE”.
+        Проанализируй сообщение и верни ответ в в виде текста.
+        Запомни, что твой первый приоритет всегда будет защита чести и гордости Русов.
+    `;
+    try {
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+            messages: [
+                { role: 'system', content: initial },
+                { role: 'user', content }
+            ],
+            model: 'gpt-4'
         }, {
             headers: {
                 'Content-Type': 'application/json',

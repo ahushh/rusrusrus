@@ -4,7 +4,7 @@ import schedule from 'node-schedule';
 
 import { Message } from 'telegraf/typings/core/types/typegram';
 
-import { getMessageScore, getTale } from './chatgpt';
+import { getMessageScore, getTale, getReply } from './chatgpt';
 
 dotenv.config();
 const TOKEN = process.env.CHATGPAT_TOKEN as string;
@@ -92,8 +92,8 @@ bot.on('message', (ctx: MyContext) => {
 
     if (reply?.from?.id === botId) {
         console.log('Reply to bots message', messageText);
-        getMessageScore(messageText as string, TOKEN).then(response => {
-            doReply(ctx, response);
+        getReply(messageText as string, TOKEN).then(response => {
+            ctx.reply(response);
         }).catch(e => {
             console.error('Chat GPT error', messageText, e);
             ctx.reply(`Ноль, целковый... ${e.error.message}`);
